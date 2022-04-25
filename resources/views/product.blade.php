@@ -28,6 +28,7 @@
                               <input type="file" name="product_img" id="" class="form-control" placeholder="Product img">
                               <span class="text-danger error-text product_img_error"></span>
                             </div>
+                            <div class="img-holder"></div>
                             <button type="submit" class="btn btn-success btn-block">Save</button>
                         </form>
                     </div>
@@ -36,7 +37,7 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header bg-primary text-white">All product</div>
-                    <div class="card-body">
+                    <div class="card-body" id="AllProducts">
 
                     </div>
                 </div>
@@ -69,13 +70,47 @@
                             });
                         }else{
                             $(form)[0].reset();
-                            alert(data.msg);
-                            // fetchAllProducts();
+                            // alert(data.msg);
+                            fetchAllProducts();
                         }
                     }
                 });
             });
-        });
+
+            // reset input file 
+            $('input[type="file"][name="product_img"]').val('');
+            $('input[type="file"][name="product_img"]').on('change', function(){
+                var img_path = $(this)[0].value;
+                var img_holder = $('.img-holder');
+                var extension = img_path.substring(img_path.lastIndexOf('.')+1).toLowerCase();
+                if(extension == 'jpeg' || extension == 'jpg' || extension == 'png')
+                {
+                    if(typeof(FileReader) != 'undefined')
+                    {
+                        img_holder.empty();
+                        var reader = new FileReader();
+                        reader.onload = function(e){
+                            $('<img/>', {'src':e.target.result, 'class':'img-fluid', 'style':'max-width:100px;margin-bottom:10px;'}).appendTo(img_holder);
+                        }
+                        img_holder.show();
+                        reader.readAsDataURL($(this)[0].files[0]);
+
+                    } else {
+                        $(img_holder).html('This browser does not support FileReader');
+                    }
+                } else {
+                    $(img_holder).empty();
+                }
+            });
+            
+            // fetch all product
+            fetchAllProducts();
+            function fetchAllProducts(){
+                $.get('{{ route("fetch.products") }}', {}, function(data){
+                    $('#AllProducts').html(data.result);
+                }, 'json');
+            }
+        })
     </script>
 </body>
 </html>

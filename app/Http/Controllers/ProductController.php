@@ -51,4 +51,11 @@ class ProductController extends Controller
             }
         }
     }
+
+    public function fetchProducts()
+    {
+        $products = Product::all();
+        $data = view('all_products')->with('products', $products)->render();
+        return response()->json(['code'=>1, 'result'=>$data]);
+    }
 }

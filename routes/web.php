@@ -20,3 +20,5 @@ Route::get('/', function () {
 
 Route::get('/product', [ProductController::class, 'index'])->name('product.index');
 Route::post('/save', [ProductController::class, 'save'])->name('product.save');
+
+Route::get('/fetchProducts', [ProductController::class, 'fetchProducts'])->name('fetch.products');
